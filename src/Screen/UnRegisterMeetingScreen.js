@@ -11,7 +11,7 @@ import {
     Modal
  } from 'antd-mobile';
 
- const unRegisterURL = 'http://60.205.141.116:60001/api/unRegister'
+ import meetingManager from '../DataServe/MeetingManager';
 
 export default class UnRegisterMeetingScreen extends Component {
 
@@ -48,47 +48,25 @@ export default class UnRegisterMeetingScreen extends Component {
         <WingBlank>
             <Button
                 type='primary'
-                onClick={async()=>{
-                    //请求API服务进行取消登记
-
-                     try {
-                        //请求API服务进行登记功能
-                        const person = {
-                            rid:this.state.rid
-                        }
-
-                        const res = await fetch(unRegisterURL,{
-                            method:'POST',
-                            headers:{
-                                'Accept':'application/json',
-                                'Content-Type':'application/json'
-                            },
-                            body:JSON.stringify(person)
-                        })
-
-                        const result = await res.json();
-
-                        if (result.success === false) {
-                            
-                            Modal.alert('错误',result.errorMessage)
-
-                            return;
-                        }
-
-                        Modal.alert('取消登记成功')
-
-
-                    } catch (error) {
-                        Modal.alert('错误',`${error}`);
-                    }
-
-
-                }}
+                onClick={this.removeUser}
             >
                 取消登记
             </Button>
         </WingBlank>
       </div>
     )
+  }
+
+  removeUser = async ()=>{
+    try {
+        const result = await meetingManager.unRegister(this.state.rid);
+        if (result.success === false) {  
+            Modal.alert('错误',result.errorMessage)
+            return;
+        }
+        Modal.alert('取消登记成功')
+    } catch (error) {
+        Modal.alert('错误',`${error}`);
+    }
   }
 }

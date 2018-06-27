@@ -8,6 +8,8 @@ import {
     NavBar 
  } from 'antd-mobile';
 
+ 
+
 export default class RegisterScreen extends Component {
   render() {
     return (

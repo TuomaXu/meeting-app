@@ -11,7 +11,7 @@ import {
     Modal
  } from 'antd-mobile';
 
- const url = 'http://60.205.141.116:60001/api/checkPerson'
+import meetingManager from '../DataServe/MeetingManager';
 
 export default class QuaryPersonStateScreen extends Component {
 
@@ -48,48 +48,29 @@ export default class QuaryPersonStateScreen extends Component {
         <WingBlank>
             <Button
                 type='primary'
-                onClick={async()=>{
-                    //请求API服务进行签到功能
-                    try {
-                        const person = {
-                            rid:this.state.rid
-                        }
-
-                        const res = await fetch(url,{
-                            method:'POST',
-                            headers:{
-                                'Accept':'application/json',
-                                'Content-Type':'application/json'
-                            },
-                            body:JSON.stringify(person)
-                        })
-
-                        const result = await res.json();
-
-                        if(result.success === false){
-
-                            Modal.alert('错误',result.errorMessage)
-
-                            return;
-                        }
-
-                        if(result.data.isCheck === 0){
-                            Modal.alert('该用户未签到');
-                        } else {
-                            Modal.alert('该用户已签到');
-                        }
-
-                    } catch (error) {
-                        Modal.alert('错误',`${error}`);
-                    }
-
-                    console.log(this.state.rid)
-                }}
+                onClick={this.findState}
             >
                 查询
             </Button>
         </WingBlank>
       </div>
     )
+  }
+
+  findState = async ()=>{
+    try {
+        const result = await meetingManager.checkPerson(this.state.rid);
+        if(result.success === false){
+            Modal.alert('错误',result.errorMessage)
+            return;
+        }
+        if(result.data.isCheck === 0){
+            Modal.alert('该用户未签到');
+        } else {
+            Modal.alert('该用户已签到');
+        }
+    } catch (error) {
+        Modal.alert('错误',`${error}`);
+    }
   }
 }

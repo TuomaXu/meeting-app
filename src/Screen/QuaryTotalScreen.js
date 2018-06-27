@@ -7,7 +7,7 @@ import {
     Modal
  } from 'antd-mobile';
 
- const chaxuTongjiURL = 'http://60.205.141.116:60001/api/tongji';
+ import meetingManager from '../DataServe/MeetingManager';
 
 export default class QuaryTotalScreen extends Component {
 
@@ -22,29 +22,16 @@ export default class QuaryTotalScreen extends Component {
     }
 
     async componentDidMount(){
-        //通过fetch向API请求数据
         try {
-            //请求API服务进行登记功能
-
-
-            const res = await fetch(chaxuTongjiURL)
-
-            const result = await res.json();
-
-            if (result.success === false) {
-                
+            const result = await meetingManager.chaxuTongji();
+            if (result.success === false) {   
                 Modal.alert('错误',result.errorMessage)
-
                 return;
             }
-
             this.setState(result.data)
-
-
         } catch (error) {
             Modal.alert('错误',`${error}`);
         }
-
     }
     
 

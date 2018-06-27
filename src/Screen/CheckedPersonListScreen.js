@@ -8,7 +8,7 @@ import {
     Modal
  } from 'antd-mobile';
 
-const url = 'http://60.205.141.116:60001/api/yiqiandao';
+import meetingManager from '../DataServe/MeetingManager';
 
 export default class CheckPersonListScreen extends Component {
 
@@ -27,38 +27,20 @@ export default class CheckPersonListScreen extends Component {
     }
 
     async componentDidMount(){
-        //在次处理需要显示数据
-
         try {
-            //请求API服务进行登记功能
-
-
-            const res = await fetch(url)
-
-            const result = await res.json();
-
-            if (result.success === false) {
-                
+            const result = await meetingManager.yiqiandao();
+            if (result.success === false) {  
                 Modal.alert('错误',result.errorMessage)
-
                 return;
             }
-
-
-            //1,通过state获取DataSource对象
-            const dataSource = this.state.dataSource;
-            //2,调用dataSource的clone方法，对数据信息写入，并更新state
-            this.setState({
-                dataSource:dataSource.cloneWithRows(result.data),
+            this.setState((preState)=>{
+                return{
+                    dataSource:preState.dataSource.cloneWithRows(result.data),
+                }
             })
-
-
         } catch (error) {
             Modal.alert('错误',`${error}`);
-        }
-
-
-        
+        }    
     }
     
 
@@ -77,21 +59,22 @@ export default class CheckPersonListScreen extends Component {
         <ListView
             useBodyScroll
             dataSource={this.state.dataSource}
-            renderRow={(person)=>{
-                console.log(person)
-                return(
-                    <List.Item
-                        extra={'ID:'+person.id}
-                    >
-                        {'姓名：'+person.name}
-                        <List.Item.Brief> 
-                            {'电话：'+person.tel} 
-                        </List.Item.Brief>   
-                    </List.Item>
-                )
-            }}
+            renderRow={this.renderRow}
         />
       </div>
+    )
+  }
+
+  renderRow = (person)=>{
+    return(
+        <List.Item
+            extra={'ID:'+person.id}
+        >
+            {'姓名：'+person.name}
+            <List.Item.Brief> 
+                {'电话：'+person.tel} 
+            </List.Item.Brief>   
+        </List.Item>
     )
   }
 }

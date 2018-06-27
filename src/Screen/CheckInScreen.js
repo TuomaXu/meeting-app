@@ -10,7 +10,8 @@ import {
     Modal
  } from 'antd-mobile';
 
- const checkURL = 'http://60.205.141.116:60001/api/check';
+
+ import meetingManager from '../DataServe/MeetingManager';
 
 export default class CheckInScreen extends Component {
 
@@ -43,41 +44,7 @@ export default class CheckInScreen extends Component {
         <WingBlank>
             <Button
                 type='primary'
-                onClick={async()=>{
-                    //请求API服务进行签到功能
-                    try {
-                        //请求API服务进行登记功能
-                        const person = {
-                            rid:this.state.rid
-                        }
-
-                        const res = await fetch(checkURL,{
-                            method:'POST',
-                            headers:{
-                                'Accept':'application/json',
-                                'Content-Type':'application/json'
-                            },
-                            body:JSON.stringify(person)
-                        })
-
-                        const result = await res.json();
-
-                        if (result.success === false) {
-                            
-                            Modal.alert('错误',result.errorMessage)
-
-                            return;
-                        }
-
-                        Modal.alert('签到成功');
-
-
-                    } catch (error) {
-                        Modal.alert('错误',`${error}`);
-                    }
-
-                    console.log(this.state.rid)
-                }}
+                onClick={this.checkButton}
             >
                 签到
             </Button>
@@ -85,4 +52,17 @@ export default class CheckInScreen extends Component {
       </div>
     )
   }
+
+    checkButton = async()=>{
+        try { 
+            const result = await meetingManager.check(this.state.rid);        
+            if (result.success === false) {
+                Modal.alert('错误',result.errorMessage)
+                return;
+            }
+            Modal.alert('签到成功');
+        } catch (error) {
+            Modal.alert('错误',`${error}`);
+        }        
+    }
 }
