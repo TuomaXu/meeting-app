@@ -143,7 +143,7 @@ class MeetingManager {
     async checkPerson(rid){
         try {
             const person = {
-                rid:this.state.rid
+                rid
             }
 
             const res = await fetch(checkPersonURL,{
